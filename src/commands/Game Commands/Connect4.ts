@@ -31,66 +31,93 @@ class Board {
 
             let won = false;
 
-            // Left
-            if (index >= 3) {
-                let row = true;
-                for (let i = 0; i < 3; i++) {
-                    if (this.state[y][index - i - 1] !== piece) {
-                        row = false;
-                        break;
+            // Horizontal
+            {
+                let count: number = 0;
+
+                for (let i = 0; i < 7; i++) {
+                    if (this.state[y][i] === piece) {
+                        count++;
+                        if (count >= 4) {
+                            break;
+                        }
+                    } else {
+                        count = 0;
                     }
                 }
 
-                if (row) {
-                    won = row;
+                if (count >= 4) {
+                    won = true;
                 }
             }
 
-            // Right
-            if (index <= 3) {
-                let row = true;
+            // Vertical
+            {
+                let count: number = 0;
 
-                for (let i = 0; i < 3; i++) {
-                    if (this.state[y][index + i + 1] !== piece) {
-                        row = false;
-                        break;
+                for (let i = 0; i < 5; i++) {
+                    if (this.state[i][index] === piece) {
+                        count++;
+                        if (count >= 4) {
+                            break;
+                        }
+                    } else {
+                        count = 0;
                     }
                 }
 
-                if (row) {
-                    won = row;
+                if (count >= 4) {
+                    won = true;
                 }
             }
 
-            // Up
-            if (y >= 3) {
-                let row = true;
+            // Diagonal Right-Down
+            {
+                let count: number = 0;
 
-                for (let i = 0; i < 3; i++) {
-                    if (this.state[y - i - 1][index] !== piece) {
-                        row = false;
-                        break;
+                for (let i = -3; i <= 3; i++) {
+                    let newX = index + i;
+                    let newY = y + i;
+
+                    if (newX >= 0 && newX < 7 && newY >= 0 && newY < 5) {
+                        if (this.state[newY][newX] === piece) {
+                            count++;
+                            if (count >= 4) {
+                                break;
+                            }
+                        } else {
+                            count = 0;
+                        }
                     }
                 }
 
-                if (row) {
-                    won = row;
+                if (count >= 4) {
+                    won = true;
                 }
             }
 
-            // Down
-            if (y <= 1) {
-                let row = true;
+            // Diagonal Right-Up
+            {
+                let count: number = 0;
 
-                for (let i = 0; i < 3; i++) {
-                    if (this.state[y + i + 1][index] !== piece) {
-                        row = false;
-                        break;
+                for (let i = -3; i <= 3; i++) {
+                    let newX = index + i;
+                    let newY = y - i;
+
+                    if (newX >= 0 && newX < 7 && newY >= 0 && newY < 5) {
+                        if (this.state[newY][newX] === piece) {
+                            count++;
+                            if (count >= 4) {
+                                break;
+                            }
+                        } else {
+                            count = 0;
+                        }
                     }
                 }
 
-                if (row) {
-                    won = row;
+                if (count >= 4) {
+                    won = true;
                 }
             }
 
@@ -190,6 +217,7 @@ export const run: RunFunction = async(client, message, args) => {
             reaction.remove();
         });
         collector.stop();
+        message.delete();
     };
 
     const filter = (reaction, user) => ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'].includes(reaction.emoji.name);
