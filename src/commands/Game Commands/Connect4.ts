@@ -213,11 +213,10 @@ export const run: RunFunction = async(client, message, args) => {
     reactions.push(await msg.react('7️⃣'));
 
     const Shutdown = () => {
+        collector.stop();
         reactions.forEach(reaction => {
             reaction.remove();
         });
-        collector.stop();
-        message.delete();
     };
 
     const filter = (reaction, user) => ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'].includes(reaction.emoji.name);
