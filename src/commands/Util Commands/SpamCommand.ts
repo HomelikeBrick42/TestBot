@@ -1,6 +1,9 @@
 import { RunFunction } from "../../interfaces/Command";
 
 export const run: RunFunction = async(client, message, args) => {
+    message.channel.send("This command is disabled!");
+    return;
+
     if (args.length < 2) {
         message.channel.send("Usage: .spam <count> <message>");
         return;

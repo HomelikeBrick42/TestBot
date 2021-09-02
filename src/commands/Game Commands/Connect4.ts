@@ -127,11 +127,13 @@ class Board {
         return [false, false];
     }
 
-    public Draw(turn: State): string {
+    public Draw(turn: State, finished = false): string {
         let text: string = '';
 
-        text += turn === State.Yellow ? ':yellow_circle:' : ':red_circle:';
-        text += '\n';
+        if (!finished) {
+            text += turn === State.Yellow ? ':yellow_circle:' : ':red_circle:';
+            text += '\n';
+        }
 
         text += ':white_large_square:';
         text += ':one:';
@@ -202,7 +204,9 @@ export const run: RunFunction = async(client, message, args) => {
 
     const board = new Board();
 
-    const msg = await message.channel.send(client.embed({ description: board.Draw(currentPiece) }, message));
+    const headerMessage = `:yellow_circle: '${player1.username}' vs :red_circle: '${player2.username}'` + "\n\n";
+
+    const msg = await message.channel.send(client.embed({ description: headerMessage + board.Draw(currentPiece) }, message));
     let reactions: MessageReaction[] = [];
     reactions.push(await msg.react('1️⃣'));
     reactions.push(await msg.react('2️⃣'));
@@ -260,20 +264,20 @@ export const run: RunFunction = async(client, message, args) => {
             }
 
             if (won) {
-                const text = board.Draw(currentPiece) + '\n' + `'${currentPiece == State.Yellow ? player2.username : player1.username}' Won!`;
+                const text = headerMessage + board.Draw(currentPiece, true) + '\n' + `'${currentPiece == State.Yellow ? player2.username : player1.username}' Won!`;
                 msg.edit(client.embed({ description: text }, message));
                 Shutdown();
                 return;
             }
 
             if (board.Full()) {
-                const text = board.Draw(currentPiece) + '\n' + `'${player1.username}' and '${player2.username}' Tied!`;
+                const text = headerMessage + board.Draw(currentPiece, true) + '\n' + `'${player1.username}' and '${player2.username}' Tied!`;
                 msg.edit(client.embed({ description: text }, message));
                 Shutdown();
                 return;
             }
 
-            msg.edit(client.embed({ description: board.Draw(currentPiece) }, message));
+            msg.edit(client.embed({ description: headerMessage + board.Draw(currentPiece) }, message));
         }
         reaction.users.remove(reaction.users.cache.last());
     });
